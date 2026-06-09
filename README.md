@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Furmey — Luxury Pet Fashion E-Commerce
 
-## Getting Started
+A production-ready full-stack luxury pet fashion e-commerce site built with Next.js 15, TypeScript, Tailwind CSS, Prisma, and Auth.js.
 
-First, run the development server:
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Animation | Framer Motion |
+| Database | PostgreSQL |
+| ORM | Prisma 6 |
+| Auth | Auth.js v5 (next-auth@beta) |
+| State | Zustand (cart + wishlist) |
+| Forms | React Hook Form + Zod |
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL running locally
+
+### 1. Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edit `.env`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/furmey?schema=public"
+AUTH_SECRET="your-super-secret-at-least-32-chars"
+```
 
-## Learn More
+### 3. Run all setup commands
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run db:generate   # Generate Prisma client
+npm run db:migrate    # Run DB migrations
+npm run db:seed       # Seed with sample data
+npm run dev           # Start development server
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Visit [http://localhost:3000](http://localhost:3000)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Seed Accounts
 
-## Deploy on Vercel
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@furmey.com | admin123 |
+| Customer | user@furmey.com | user1234 |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Available Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Build for production |
+| `npm run db:generate` | Generate Prisma client |
+| `npm run db:migrate` | Run DB migrations (name: init) |
+| `npm run db:push` | Push schema without migration file |
+| `npm run db:seed` | Seed sample data |
+| `npm run db:studio` | Open Prisma Studio |
+| `npm run db:reset` | Reset DB and re-seed |
+
+## Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Home — hero, featured products, collections, testimonials |
+| `/shop` | Product listing with filters, search, sorting |
+| `/shop/[slug]` | Product detail with gallery, variants, reviews |
+| `/collections` | Collections grid |
+| `/collections/[slug]` | Collection products |
+| `/about` | Brand story, team, values |
+| `/contact` | Contact form |
+| `/login` | Sign in |
+| `/register` | Create account |
+| `/wishlist` | Saved products (Zustand-persisted) |
+| `/cart` | Shopping cart |
+| `/dashboard` | User orders, addresses, reviews |
+| `/admin` | Admin dashboard (ADMIN role required) |
+
+## Database Models
+
+`User`, `Account`, `Session`, `Category`, `Collection`, `Product`, `CollectionProduct`, `ProductImage`, `Variant`, `Inventory`, `Cart`, `CartItem`, `Wishlist`, `WishlistItem`, `Order`, `OrderItem`, `Address`, `Review`
+
+## Project Structure
+
+```
+src/
+├── app/                  # Next.js App Router pages + API routes
+├── components/
+│   ├── cart/             # CartSheet slide-over
+│   ├── home/             # Hero, Featured*, Testimonials, Newsletter
+│   ├── layout/           # Navbar, Footer
+│   ├── products/         # ProductCard, Grid, Filters, Reviews
+│   └── providers/        # SessionProvider + ThemeProvider
+├── lib/
+│   ├── auth.ts           # Auth.js config (JWT + Credentials)
+│   ├── prisma.ts         # Prisma singleton
+│   └── validations.ts    # Zod schemas
+├── store/
+│   ├── cart.ts           # Zustand cart (localStorage)
+│   └── wishlist.ts       # Zustand wishlist (localStorage)
+└── types/                # Shared TypeScript types + next-auth.d.ts
+```
+
+## Notes
+
+- Product images use Unsplash placeholder URLs from seed data. Replace with real CDN images in production.
+- Cart and wishlist use Zustand with localStorage persistence. The `/api/cart` and `/api/wishlist` routes provide server-side sync for authenticated users.
+- This project uses shadcn/ui with `@base-ui/react` (not Radix UI). The `asChild` prop is unavailable — use `buttonVariants()` with `<Link>` for link-styled buttons.
+- No payment integration — add Stripe to the checkout flow when ready.
